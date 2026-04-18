@@ -98,20 +98,27 @@ function PageHeader({ tab, setTab, recordCount }) {
 
 function App() {
   const [state, dispatch] = React.useReducer(reducer, undefined, () => initialState());
+  const showScenarios = React.useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).has('scenarios');
+  }, []);
   const [scenario, setScenario] = React.useState(() => {
+    if (!showScenarios) return null;
     try { return localStorage.getItem('dns_scenario') || 'dns'; } catch { return 'dns'; }
   });
   const { toasts, push, close } = useToasts();
   const pushRef = React.useRef(push);
   pushRef.current = push;
 
-  // Persist scenario
+  // Persist scenario (scenarios mode only)
   React.useEffect(() => {
+    if (!showScenarios || !scenario) return;
     try { localStorage.setItem('dns_scenario', scenario); } catch {}
-  }, [scenario]);
+  }, [scenario, showScenarios]);
 
-  // Apply scenario
+  // Apply scenario (scenarios mode only)
   React.useEffect(() => {
+    if (!showScenarios || !scenario) return;
     const s = SCENARIOS.find(x => x.id === scenario) || SCENARIOS[0];
     const tab = s.tab;
 
@@ -170,7 +177,7 @@ function App() {
       default:
         dispatch({ type: 'RESET', overrides: base });
     }
-  }, [scenario]);
+  }, [scenario, showScenarios]);
 
   // Clear flash animation after it plays
   React.useEffect(() => {
@@ -251,11 +258,14 @@ function App() {
   };
 
   const setTab = (tab) => {
-    // pick closest scenario
-    if (tab === 'dns' && state.tab !== 'dns') setScenario('dns');
-    else if (tab === 'settings' && state.tab !== 'settings') {
-      setScenario(state.dnssecOn ? 'dnssec-on' : 'dnssec-off');
+    if (tab === state.tab) return;
+    if (showScenarios) {
+      // In scenarios mode, route through scenarios so the panel stays in sync
+      if (tab === 'dns') setScenario('dns');
+      else setScenario(state.dnssecOn ? 'dnssec-on' : 'dnssec-off');
+      return;
     }
+    dispatch({ type: 'SWITCH_TAB', tab });
   };
 
   return (
@@ -292,7 +302,7 @@ function App() {
         />
       )}
 
-      <Scenarios current={scenario} setCurrent={setScenario} />
+      {showScenarios && <Scenarios current={scenario} setCurrent={setScenario} />}
     </div>
   );
 }

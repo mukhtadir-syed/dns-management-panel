@@ -39,7 +39,7 @@ function NameServers({ loading }) {
               <ol>
                 <li>Log in at your domain registrar</li>
                 <li>Find the <strong>Nameservers</strong> or <strong>DNS</strong> section</li>
-                <li>Replace any existing entries with the four above</li>
+                <li>Replace any existing entries with these four</li>
                 <li>Save — propagation can take up to 24 hours</li>
               </ol>
             </div>

@@ -963,17 +963,256 @@ body {
 .menu-item.danger:hover { background: var(--danger-bg); }
 .menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
 
-/* Responsive — tablet/mobile */
+/* ============================================================
+   Responsive — tablet (≤900px) and phone (≤640px)
+   ============================================================ */
+
 @media (max-width: 900px) {
-  .ns-grid { grid-template-columns: 1fr; }
-  .page-header, .main { padding-left: 16px; padding-right: 16px; }
-  .edit-form { grid-template-columns: 1fr 1fr; }
+  /* Outer shell padding */
+  .topbar { padding: 0 16px; }
+  .page-header { padding-left: 16px; padding-right: 16px; padding-top: 20px; }
+  .main { padding: 20px 16px 32px; }
+
+  /* Name servers stack vertically */
+  .ns-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* Edit form compacts to 2 columns */
+  .edit-form { grid-template-columns: 1fr 1fr; gap: 12px; }
   .edit-form.has-priority { grid-template-columns: 1fr 1fr; }
-  .edit-actions { grid-column: 1 / -1; padding-top: 0; }
+  .edit-actions {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+    justify-content: flex-end;
+  }
+
+  /* Records table → card-style rows with labels */
   .rec-table thead { display: none; }
-  .rec-table, .rec-table tbody, .rec-table tr, .rec-table td { display: block; width: 100%; }
-  .rec-table tbody tr { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-  .rec-table tbody td { padding: 2px 0; border-bottom: none; }
-  .action-cell { text-align: left; margin-top: 6px; }
-  .ds-header, .ds-row { grid-template-columns: 1fr; gap: 4px; }
+  .rec-table,
+  .rec-table tbody,
+  .rec-table tr { display: block; width: 100%; }
+  .rec-table tbody tr {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .rec-table tbody tr:last-child { border-bottom: none; }
+  .rec-table tbody td {
+    display: flex;
+    align-items: baseline;
+    padding: 3px 0;
+    border-bottom: none;
+  }
+  .rec-table tbody td[data-label]::before {
+    content: attr(data-label);
+    display: inline-block;
+    width: 56px;
+    flex-shrink: 0;
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-subtle);
+    font-weight: 500;
+    padding-top: 1px;
+  }
+  .rec-table .name-cell,
+  .rec-table .value-cell {
+    max-width: none;
+    white-space: normal;
+    word-break: break-all;
+  }
+  .rec-table tbody td.action-cell {
+    justify-content: flex-end;
+    gap: 2px;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    width: auto;
+  }
+
+  /* Edit row inside table — reset flex behavior we applied to tds */
+  .rec-table tr.edit-row { display: block; }
+  .rec-table tr.edit-row td {
+    display: block;
+    padding: 0;
+    border-top: none;
+  }
+  .rec-table tr.edit-row td::before { content: none; }
+
+  /* DS records stack */
+  .ds-header, .ds-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .ds-row { padding: 12px 14px; }
+  .ds-row .copy-btn { justify-self: start; margin-top: 6px; }
+}
+
+@media (max-width: 640px) {
+  /* Top bar — trim aggressively on phone */
+  .topbar {
+    padding: 0 12px;
+    gap: 10px;
+    height: 52px;
+  }
+  .topbar-brand { font-size: 13px; }
+  .topbar-brand > span:last-child { display: none; }
+  .breadcrumb { font-size: 12px; gap: 6px; min-width: 0; overflow: hidden; }
+  .breadcrumb > span:not(.current):not(.sep) { display: none; }
+  .breadcrumb > .sep:first-of-type { display: none; }
+  .breadcrumb .current {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-right > span { display: none; }
+
+  /* Page header */
+  .page-header { padding: 16px 12px 0; }
+  .domain-row { flex-wrap: wrap; gap: 8px; }
+  .domain-name { font-size: 18px; }
+  .domain-sub { font-size: 12px; margin-bottom: 10px; }
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 10px 10px;
+    font-size: 12.5px;
+    flex-shrink: 0;
+  }
+
+  /* Main */
+  .main { padding: 14px 12px 28px; }
+
+  /* Section chrome */
+  .section { border-radius: 8px; }
+  .section-head {
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .section-body { padding: 14px; }
+
+  /* Toolbar — stack: row 1 has title + result count + Add; row 2 has search + filter */
+  .toolbar {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    row-gap: 10px;
+  }
+  .toolbar .section-title { font-size: 12.5px; margin-right: 0; }
+  .result-count { display: none; }
+  .toolbar > div[style*="flex: 1"] { display: none; }
+  .toolbar-right {
+    margin-left: auto;
+    order: 0;
+  }
+  .search {
+    flex: 1 1 100%;
+    max-width: none;
+    order: 10;
+  }
+  .filter-chip-wrap { order: 11; }
+  .filter-chip {
+    height: 32px;
+    padding: 0 10px;
+  }
+
+  /* Edit form — single column on phone */
+  .edit-form,
+  .edit-form.has-priority {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+  .edit-actions {
+    justify-content: flex-end;
+    padding-top: 0;
+  }
+
+  /* Name server rows — keep label + value, allow value to wrap */
+  .ns-row {
+    padding: 8px 10px;
+    flex-wrap: wrap;
+  }
+  .ns-value {
+    font-size: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-all;
+  }
+  .ns-row .copy-btn { flex-shrink: 0; }
+
+  /* Toasts span full width */
+  .toast-stack {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+  }
+  .toast {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Modals — near full width, stacking footer buttons */
+  .modal {
+    width: 100%;
+    max-width: calc(100vw - 16px);
+    border-radius: 10px;
+  }
+  .modal-head { padding: 16px 16px 6px; }
+  .modal-body { padding: 4px 16px 14px; }
+  .modal-error { margin: 0 16px 10px; }
+  .modal-foot {
+    padding: 12px 16px;
+    flex-wrap: wrap-reverse;
+    gap: 8px;
+  }
+  .modal-foot .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  /* Scenarios pill + popover */
+  .scenarios-toggle {
+    bottom: 12px;
+    right: 12px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+  }
+  .scenarios-toggle .kbd { display: none; }
+  .scenarios {
+    bottom: 56px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+    max-height: 60vh;
+  }
+
+  /* Records table — row padding + action row */
+  .rec-table tbody tr { padding: 14px 12px; }
+  .rec-table tbody td[data-label]::before { width: 52px; }
+
+  /* Empty / skeleton paddings */
+  .empty { padding: 40px 16px; }
+
+  /* DNSSEC toggle row — keep toggle visible even with wrapped desc */
+  .toggle-row { gap: 12px; }
+  .toggle-desc { font-size: 12px; }
+
+  /* Propagation note smaller */
+  .propagation-note { padding: 8px 12px; font-size: 11.5px; }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

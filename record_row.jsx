@@ -13,10 +13,10 @@ function formatValue(rec) {
 function RecordRow({ rec, isFlashing, onEdit, onDelete }) {
   return (
     <tr className={isFlashing ? 'flash' : ''}>
-      <td><TypeBadge type={rec.type} /></td>
-      <td className="name-cell mono">{rec.name === '@' ? <span><span style={{color:'var(--text-subtle)'}}>@</span> <span style={{color:'var(--text-subtle)'}}>({DOMAIN})</span></span> : rec.name}</td>
-      <td className="value-cell mono">{formatValue(rec)}</td>
-      <td className="ttl-cell">{ttlLabel(rec.ttl)}</td>
+      <td data-label="Type"><TypeBadge type={rec.type} /></td>
+      <td data-label="Name" className="name-cell mono">{rec.name === '@' ? <span><span style={{color:'var(--text-subtle)'}}>@</span> <span style={{color:'var(--text-subtle)'}}>({DOMAIN})</span></span> : rec.name}</td>
+      <td data-label="Value" className="value-cell mono">{formatValue(rec)}</td>
+      <td data-label="TTL" className="ttl-cell">{ttlLabel(rec.ttl)}</td>
       <td className="action-cell">
         <button className="btn ghost" onClick={() => onEdit(rec.id)} title="Edit"><Icon.Edit /></button>
         <button className="btn ghost" onClick={() => onDelete(rec.id)} title="Delete"><Icon.Trash /></button>
